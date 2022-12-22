@@ -33,20 +33,25 @@ void DS3231_Init(I2C_HandleTypeDef *hi2c);
 DS3231_Init(&hi2c1);
  ```
 #### Date and time settings
-* Date functions:
 ```c
-void DS3231_SetDayOfWeek(uint8_t dow); // <-- Number of days since Sunday, 1 to 7.
-void DS3231_SetDate(uint8_t date);
-void DS3231_SetMonth(uint8_t month);
-void DS3231_SetYear(uint16_t year);
-void DS3231_SetFullDate(uint8_t date, uint8_t month, uint8_t dow, uint16_t year);
+typedef struct {
+    uint8_t Second;         /* seconds */
+    uint8_t Minute;         /* minutes */
+    uint8_t Hour;           /* hours */
+    uint8_t Day;            /* day of the month */
+    uint8_t Month;          /* month */
+    int16_t Year;           /* year offset from 1970 */
+    uint8_t Wday;           /* day of the week */
+    uint8_t Yday;           /* day in the year */
+    uint8_t IsDST;          /* daylight saving time */
+
+    uint32_t unixtime;      /* seconds since 01.01.1970 00:00:00 UTC*/
+} ts;
 ```
-* Time functions:
+* DateTime functions:
 ```c
-void DS3231_SetHour(uint8_t hour_24mode);
-void DS3231_SetMinute(uint8_t minute);
-void DS3231_SetSecond(uint8_t second);
-void DS3231_SetFullTime(uint8_t hour_24mode, uint8_t minute, uint8_t second);
+void DS3231_SetTime(ts time);
+ts DS3231_GetTime(void);
 ```
 
 #### Interrupt modes
