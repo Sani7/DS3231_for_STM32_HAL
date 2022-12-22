@@ -106,6 +106,7 @@ int main(void) {
 	MX_USART1_UART_Init();
 	MX_I2C1_Init();
 	/* USER CODE BEGIN 2 */
+	ts time;
 	//DS3231 init function. Pass I2C handle.
 	DS3231_Init(&hi2c1);
 	//Disable interrupts while we set interrupt configs.
@@ -114,10 +115,15 @@ int main(void) {
 	DS3231_SetInterruptMode(DS3231_SQUARE_WAVE_INTERRUPT);
 	//Set interrupting frequency to 1 Hz.
 	DS3231_SetRateSelect(DS3231_1HZ);
-	//Set time.
-	DS3231_SetFullTime(23, 59, 50);
-	//Set date.
-	DS3231_SetFullDate(10, 11, 2, 2020);
+	time.Hour = 23;
+	time.Minute = 59;
+	time.Second = 50;
+	time.Day = 10;
+	time.Month = 11;
+	time.Wday = 2;
+	time.Year = 2020-1970; // time offset from 1970 (unix time)
+	//Set date and time.
+	DS3231_SetTime(time);
 	//Print all register values, for demonstration purpose
   	for(uint8_t i = 0x00; i < 0x13; i++)
     		printr(i);
@@ -134,33 +140,42 @@ int main(void) {
 	//Test alarm 1
 	DS3231_EnableAlarm1(DS3231_ENABLED);
 	DS3231_SetAlarm1Mode(DS3231_A1_MATCH_S_M_H_DATE);
-	DS3231_SetAlarm1Second(3);
-	DS3231_SetAlarm1Minute(0);
-	DS3231_SetAlarm1Hour(0);
-	DS3231_SetAlarm1Date(11);
+
+	time.Hour = 0;
+	time.Minute = 0;
+	time.Second = 3;
+	time.Day = 11;
+	DS3231_SetAlarm1Time(time);
 
 	//Test alarm 2
 	DS3231_ClearAlarm2Flag();
 	DS3231_EnableAlarm2(DS3231_ENABLED);
 	DS3231_SetAlarm2Mode(DS3231_A2_MATCH_M_H_DAY);
-	DS3231_SetAlarm2Minute(0);
-	DS3231_SetAlarm2Hour(0);
-	DS3231_SetAlarm2Day(3);
+	time.Wday = 3;
+	DS3231_SetAlarm2Time(time);
 
 	//Check if alarm behavior is correct
 	__enable_irq();
 	HAL_Delay(5000);
-	DS3231_SetFullTime(1, 59, 59);
-	DS3231_SetDate(11);
-	DS3231_SetDayOfWeek(3);
+	time.Hour = 1;
+	time.Minute = 59;
+	time.Second = 59;
+	time.Day = 11;
+	time.Wday = 3;
+	DS3231_SetTime(time);
 	HAL_Delay(5000);
-	DS3231_SetFullTime(23, 59, 59);
-	DS3231_SetDate(10);
-	DS3231_SetDayOfWeek(2);
+	time.Hour = 23;
+	time.Minute = 59;
+	time.Second = 59;
+	time.Day = 10;
+	time.Wday = 2;
+	DS3231_SetTime(time);
 	HAL_Delay(5000);
-	DS3231_SetFullTime(23, 59, 59);
-	DS3231_SetDate(11);
-	DS3231_SetDayOfWeek(3);
+	time.Hour = 23;
+	time.Minute = 59;
+	time.Second = 59;
+	time.Day = 11;
+	time.Wday = 3;
 	HAL_Delay(5000);
 
 	/* USER CODE END 2 */
