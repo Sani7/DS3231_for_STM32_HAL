@@ -103,21 +103,21 @@ void DS3231_EnableOscillator(DS3231_State enable);
 void DS3231_EnableAlarm2(DS3231_State enable);
 void DS3231_SetAlarm2Mode(DS3231_Alarm2Mode alarmMode);
 void DS3231_ClearAlarm2Flag();
-void DS3231_SetAlarm2Time(ts time);
+void DS3231_SetAlarm2Time(ts* time);
 
 void DS3231_EnableAlarm1(DS3231_State enable);
 void DS3231_SetAlarm1Mode(DS3231_Alarm1Mode alarmMode);
 void DS3231_ClearAlarm1Flag();
-void DS3231_SetAlarm1Time(ts time);
+void DS3231_SetAlarm1Time(ts* time);
 
 uint8_t DS3231_IsOscillatorStopped();
 uint8_t DS3231_Is32kHzEnabled();
 uint8_t DS3231_IsAlarm1Triggered();
 uint8_t DS3231_IsAlarm2Triggered();
 
-ts DS3231_GetTime(void);
+void DS3231_GetTime(ts* time);
 
-void DS3231_SetTime(ts time);
+void DS3231_SetTime(ts* time);
 
 uint8_t DS3231_DecodeBCD(uint8_t bin);
 uint8_t DS3231_EncodeBCD(uint8_t dec);

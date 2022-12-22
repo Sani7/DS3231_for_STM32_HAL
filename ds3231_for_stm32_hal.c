@@ -8,7 +8,7 @@
 extern "C"{
 #endif
 
-static I2C_HandleTypeDef *_ds3231_ui2c;
+I2C_HandleTypeDef *_ds3231_ui2c;
 
 /**
  * @brief Initializes the DS3231 module. Set clock halt bit to 0 to start timing.
@@ -104,22 +104,22 @@ void DS3231_ClearAlarm2Flag(){
  * 
  * @param time only the hour, minute, day and Wday fields are used
  */
-void DS3231_SetAlarm2Time(ts time)
+void DS3231_SetAlarm2Time(ts* time)
 {
     uint8_t temp = DS3231_GetRegByte(DS3231_A2_MINUTE) & 0x80;
-	uint8_t a2 = temp | (DS3231_EncodeBCD(time.Minute) & 0x3f);
+	uint8_t a2 = temp | (DS3231_EncodeBCD(time->Minute) & 0x3f);
 	DS3231_SetRegByte(DS3231_A2_MINUTE, a2);
 
     temp = DS3231_GetRegByte(DS3231_A2_HOUR) & 0x80;
-	a2 = temp | (DS3231_EncodeBCD(time.Hour) & 0x3f);
+	a2 = temp | (DS3231_EncodeBCD(time->Hour) & 0x3f);
 	DS3231_SetRegByte(DS3231_A2_HOUR, a2);
 
     temp = DS3231_GetRegByte(DS3231_A2_DATE) & 0x80;
-	a2 = temp | (DS3231_EncodeBCD(time.Day) & 0x3f);
+	a2 = temp | (DS3231_EncodeBCD(time->Day) & 0x3f);
 	DS3231_SetRegByte(DS3231_A2_DATE, a2);
 
     temp = DS3231_GetRegByte(DS3231_A2_DATE) & 0x80;
-	a2 = temp | (0x01 << DS3231_DYDT) | (DS3231_EncodeBCD(time.Wday) & 0x3f);
+	a2 = temp | (0x01 << DS3231_DYDT) | (DS3231_EncodeBCD(time->Wday) & 0x3f);
 	DS3231_SetRegByte(DS3231_A2_DATE, a2);
 }
 
@@ -160,26 +160,26 @@ void DS3231_ClearAlarm1Flag(){
  * 
  * @param time only the hour, minute, second, day and Wday fields are used
  */
-void DS3231_SetAlarm1Time(ts time)
+void DS3231_SetAlarm1Time(ts* time)
 {
     uint8_t temp = DS3231_GetRegByte(DS3231_A1_SECOND) & 0x80;
-	uint8_t a1 = temp | (DS3231_EncodeBCD(time.Second) & 0x3f);
+	uint8_t a1 = temp | (DS3231_EncodeBCD(time->Second) & 0x3f);
 	DS3231_SetRegByte(DS3231_A1_SECOND, a1);
 
     temp = DS3231_GetRegByte(DS3231_A1_MINUTE) & 0x80;
-	a1 = temp | (DS3231_EncodeBCD(time.Minute) & 0x3f);
+	a1 = temp | (DS3231_EncodeBCD(time->Minute) & 0x3f);
 	DS3231_SetRegByte(DS3231_A1_MINUTE, a1);
 
     temp = DS3231_GetRegByte(DS3231_A1_HOUR) & 0x80;
-	a1 = temp | (DS3231_EncodeBCD(time.Hour) & 0x3f);
+	a1 = temp | (DS3231_EncodeBCD(time->Hour) & 0x3f);
 	DS3231_SetRegByte(DS3231_A1_HOUR, a1);
 
     temp = DS3231_GetRegByte(DS3231_A1_DATE) & 0x80;
-	a1 = temp | (DS3231_EncodeBCD(time.Day) & 0x3f);
+	a1 = temp | (DS3231_EncodeBCD(time->Day) & 0x3f);
 	DS3231_SetRegByte(DS3231_A1_DATE, a1);
 
     temp = DS3231_GetRegByte(DS3231_A1_DATE) & 0x80;
-	a1 = temp | (0x01 << DS3231_DYDT) | (DS3231_EncodeBCD(time.Wday) & 0x3f);
+	a1 = temp | (0x01 << DS3231_DYDT) | (DS3231_EncodeBCD(time->Wday) & 0x3f);
 	DS3231_SetRegByte(DS3231_A1_DATE, a1);
 }
 
@@ -231,46 +231,44 @@ uint8_t DS3231_IsAlarm2Triggered(){
 	return (DS3231_GetRegByte(DS3231_REG_STATUS) >> DS3231_A2F) & 0x01;
 }
 /**
- * @brief Get the current time.
+ * @brief Get the current time->
  * 
  * @return ts Second, Minute, Hour, Day, Wday, Month, Year fields are set.
  */
-ts DS3231_GetTime(void)
+void DS3231_GetTime(ts* time)
 {
     uint8_t decYear;
     uint16_t century;
-    ts time;
-    time.Second = DS3231_DecodeBCD(DS3231_GetRegByte(DS3231_REG_SECOND));
-    time.Minute = DS3231_DecodeBCD(DS3231_GetRegByte(DS3231_REG_MINUTE));
-    time.Hour = DS3231_DecodeBCD(DS3231_GetRegByte(DS3231_REG_HOUR) & 0x3f);
-    time.Day = DS3231_DecodeBCD(DS3231_GetRegByte(DS3231_REG_DATE));
-    time.Wday = DS3231_DecodeBCD(DS3231_GetRegByte(DS3231_REG_DOW));
-    time.Month = DS3231_DecodeBCD(DS3231_GetRegByte(DS3231_REG_MONTH) & 0x7f);
+    time->Second = DS3231_DecodeBCD(DS3231_GetRegByte(DS3231_REG_SECOND));
+    time->Minute = DS3231_DecodeBCD(DS3231_GetRegByte(DS3231_REG_MINUTE));
+    time->Hour = DS3231_DecodeBCD(DS3231_GetRegByte(DS3231_REG_HOUR) & 0x3f);
+    time->Day = DS3231_DecodeBCD(DS3231_GetRegByte(DS3231_REG_DATE));
+    time->Wday = DS3231_DecodeBCD(DS3231_GetRegByte(DS3231_REG_DOW));
+    time->Month = DS3231_DecodeBCD(DS3231_GetRegByte(DS3231_REG_MONTH) & 0x7f);
     decYear = DS3231_DecodeBCD(DS3231_GetRegByte(DS3231_REG_YEAR));
 	century = (DS3231_GetRegByte(DS3231_REG_MONTH) >> DS3231_CENTURY) * 100 + 2000;
-    time.Year = decYear + century;
-    return time;
+    time->Year = decYear + century;
 }
 
 /**
- * @brief Set the current time.
+ * @brief Set the current time->
  * 
  * @param time Second, Minute, Hour, Day, Wday, Month, Year fields are used.
  */
-void DS3231_SetTime(ts time)
+void DS3231_SetTime(ts* time)
 {
     uint8_t century;
     uint8_t monthReg;
-    DS3231_SetRegByte(DS3231_REG_SECOND, DS3231_EncodeBCD(time.Second));
-    DS3231_SetRegByte(DS3231_REG_MINUTE, DS3231_EncodeBCD(time.Minute));
-    DS3231_SetRegByte(DS3231_REG_HOUR, DS3231_EncodeBCD(time.Hour));
-    DS3231_SetRegByte(DS3231_REG_DATE, DS3231_EncodeBCD(time.Day));
-    DS3231_SetRegByte(DS3231_REG_DOW, DS3231_EncodeBCD(time.Wday));
-    DS3231_SetRegByte(DS3231_REG_MONTH, DS3231_EncodeBCD(time.Month));
-    century = ((time.Year + 1970) / 100) % 20;
+    DS3231_SetRegByte(DS3231_REG_SECOND, DS3231_EncodeBCD(time->Second));
+    DS3231_SetRegByte(DS3231_REG_MINUTE, DS3231_EncodeBCD(time->Minute));
+    DS3231_SetRegByte(DS3231_REG_HOUR, DS3231_EncodeBCD(time->Hour));
+    DS3231_SetRegByte(DS3231_REG_DATE, DS3231_EncodeBCD(time->Day));
+    DS3231_SetRegByte(DS3231_REG_DOW, DS3231_EncodeBCD(time->Wday));
+    DS3231_SetRegByte(DS3231_REG_MONTH, DS3231_EncodeBCD(time->Month));
+    century = ((time->Year + 1970) / 100) % 20;
 	monthReg = (DS3231_GetRegByte(DS3231_REG_MONTH) & 0x7f) | (century << DS3231_CENTURY);
 	DS3231_SetRegByte(DS3231_REG_MONTH, monthReg);
-	DS3231_SetRegByte(DS3231_REG_YEAR, DS3231_EncodeBCD((time.Year + 1970) % 100));
+	DS3231_SetRegByte(DS3231_REG_YEAR, DS3231_EncodeBCD((time->Year + 1970) % 100));
 }
 
 /**

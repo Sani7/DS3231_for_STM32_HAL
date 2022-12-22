@@ -50,8 +50,8 @@ typedef struct {
 ```
 * DateTime functions:
 ```c
-void DS3231_SetTime(ts time);
-ts DS3231_GetTime(void);
+void DS3231_GetTime(ts* time);
+void DS3231_SetTime(ts* time);
 ```
 
 #### Interrupt modes
@@ -87,6 +87,11 @@ void DS3231_EnableAlarm2(DS3231_State enable);
 ```c
 void DS3231_SetAlarm1Mode(DS3231_Alarm1Mode alarmMode);
 void DS3231_SetAlarm2Mode(DS3231_Alarm2Mode alarmMode);
+```
+* Set alarm with:
+```c
+void DS3231_SetAlarm1Time(ts* time);
+void DS3231_SetAlarm2Time(ts* time);
 ```
 * Options modes: (refer to table 2 of [datasheets](https://datasheets.maximintegrated.com/en/ds/DS3231.pdf)):
 ```c
