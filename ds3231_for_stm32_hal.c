@@ -247,7 +247,7 @@ void DS3231_GetTime(ts* time)
     time->Month = DS3231_DecodeBCD(DS3231_GetRegByte(DS3231_REG_MONTH) & 0x7f);
     decYear = DS3231_DecodeBCD(DS3231_GetRegByte(DS3231_REG_YEAR));
 	century = (DS3231_GetRegByte(DS3231_REG_MONTH) >> DS3231_CENTURY) * 100 + 2000;
-    time->Year = decYear + century;
+    time->Year = decYear + century - 1970;
 }
 
 /**
